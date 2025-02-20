@@ -33,10 +33,17 @@ app.get('/getuser', async (req, res) => {
     }
 })
 
-app.get('/getalluser', async (req, res) => {
+app.get('/getallusers', async (req, res) => {
+
+    let start_value = (req.query.pagenumber - 1) * req.query.pagesize;
+    let end_value = req.query.pagesize;
+    let sql = "select * from users";
+    if( !isNaN(start_value ) && !isNaN(end_value )){
+        sql += `LIMIT ${start_value},${end_value}`;
+    }
 
     try {
-        const [data] = await conn.execute(`select * from users LIMIT 1`);
+        const [data] = await conn.execute(sql);
         data.forEach((row) => {
             console.log(`${row.id} = ${row.lastname} ${row.firstname}`);
         });
