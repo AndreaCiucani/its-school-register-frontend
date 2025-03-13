@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 
 var connection = mysql.createPool({
     host: process.env.HOST,
+    // port: 3306,
     user: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
@@ -17,4 +18,4 @@ connection.getConnection((err) => {
     }
 });
 
-module.exports = connection.promise(); //uguale a fare una async function
+module.exports = connection.promise();
