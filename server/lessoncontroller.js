@@ -22,14 +22,14 @@ function initLessonRoutes(app) {
     app.post('/createlesson', jsonParser, authenticateToken, async (req, res) => {
         let requestbody = req.body;
         try {
-
+ 
             //data validation
-            let validation = await con.query(`select id from modules where id = ?`[requestbody.id_module]);
+            let validation = await con.query(`select id from modules where id = ?`,[requestbody.id_module]);
             if (validation[0].length < 1) {
                 res.json({ error: true, errormessage: "ID_MODULE_NOT_EXIST" })
                 return;
             }
-            validation = await con.query(`select id from lessons where id_module = ? and startdate = ? between startdate and enddate and enddate = ? between startdate and enddate`, [requestbody.id_module, requestbody.startdate, requestbody.enddate]);
+            validation = await con.query(`select id from lessons where id_module = ? and ? between startdate and enddate or ? between startdate and enddate`, [requestbody.id_module, requestbody.startdate, requestbody.enddate]);
             if (validation[0].length > 0) {
                 res.json({ error: true, errormessage: "LESSON_EXISTS" });
                 return;
