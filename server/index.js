@@ -24,6 +24,7 @@ defineCourseRoutes(app);
 defineModuleRoutes(app);
 defineLessonRoutes(app);
 
+
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
