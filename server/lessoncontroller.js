@@ -178,16 +178,40 @@ function initLessonRoutes(app) {
        
     })
 
-    app.get('/getlessonpresences', jsonParser, auth.authenticateToken, async (req, res) => {
-        let requestbody = req.body;
-        //recupera l'elenco delle presenze
-        //dato l'id lezione
+    app.get('/getlessonpresences', auth.authenticateToken, async (req, res) => {
+        try {
+            let validation = await con.query(`select id from lessons where id = ?`, [req.query.id_lesson]);
+            if (validation[0].length < 1) {
+                res.json({ error: true, errormessage: "LESSON_DOESNT_EXIST" });
+                return;
+            }
+            const [data] = await con.execute(`select * from lessons_presences where id_lesson = ?`, [req.query.id_lesson]);
+
+            res.json(data);
+        } catch (err) {
+            console.log("Getlessonpresences Error:" + err);
+            res.json({ error: true, errormessage: "GENERIC_ERROR" });
+        }
     })
 
-    app.get('/getuserpresences', jsonParser, auth.authenticateToken, async (req, res) => {
+    app.post('/getuserpresences', jsonParser, auth.authenticateToken, async (req, res) => {
         let requestbody = req.body;
         //recupera l'elenco delle presenze
         //dell'utente corrente, da data a data
+        try {
+            let validation = await con.query(`select id from lessons where id = ?`, [requestbody.id_lesson]);
+            if (validation[0].length < 1) {
+                res.json({ error: true, errormessage: "LESSON_DOESNT_EXIST" });
+                return;
+            }
+            const [data] = await con.execute(`select * from lessons_presences where id_lesson = ? and id_user = ?`, [req.query.id_lesson, req.user.userid]);
+
+            res.json(data);
+        } catch (err) {
+            console.log("Getlessonpresences Error:" + err);
+            res.json({ error: true, errormessage: "GENERIC_ERROR" });
+        }
+
     })
 
     app.get('/getmodulepresences', jsonParser, auth.authenticateToken, async (req, res) => {
